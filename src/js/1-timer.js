@@ -18,7 +18,6 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-
 let getRef = selector => document.querySelector(selector);
 const inputDatePickerRef = getRef('#datetime-picker');
 const btnStartRef = getRef('[data-start]');
@@ -30,6 +29,8 @@ const secondsRef = getRef('[data-seconds]');
 let timeDifference = 0;
 let timerId = null;
 let formatDate = null;
+
+
 
 const options = {
   enableTime: true,
@@ -54,7 +55,7 @@ function currentDifferenceDate(selectedDates) {
 
   if (selectedDates < currentDate) {
     btnStartRef.setAttribute('disabled', true);
-    return Notify.failure('Please choose a date in the future');
+    return Notiflix.Notify.failure('Please choose a date in the future');
   }
 
   timeDifference = selectedDates.getTime() - currentDate;
@@ -69,7 +70,7 @@ function startTimer() {
 
   if (timeDifference <= 0) {
     clearInterval(timerId);
-    Notify.success('Time end');
+    Notiflix.Notify.success('Time end');
   } else {
     formatDate = convertMs(timeDifference);
     renderDate(formatDate);
