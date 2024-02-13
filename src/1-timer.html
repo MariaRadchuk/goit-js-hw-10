@@ -3,15 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Countdown timer</title>
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="stylesheet" href="izitoast/dist/css/iziToast.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/timer.css" />
+    <title>Document</title>
   </head>
   <body>
-    <p><a href="index.html">Go back</a></p>
-
-    <input type="text" id="datetime-picker" />
-    <button type="button" data-start>Start</button>
+    <input type="text" class="input" id="datetime-picker" />
+    <button type="button" class="js-button button" data-start>Start</button>
 
     <div class="timer">
       <div class="field">
@@ -31,8 +34,6 @@
         <span class="label">Seconds</span>
       </div>
     </div>
-
-    <script src="./node_modules/notiflix/build/notiflix-notify-aio.js"></script>
-    <script src="./js/1-timer.js"></script>
+    <script type="module" src="./js/1-timer.js"></script>
   </body>
 </html>
