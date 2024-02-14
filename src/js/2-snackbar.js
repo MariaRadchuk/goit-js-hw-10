@@ -1,46 +1,44 @@
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import iconClose from '../img/bi_x-octagon.png';
+import iconOk from '../img/bi_check2-circle.svg';
 
 const form = document.querySelector('.form');
-const input = document.querySelector('.input-delay');
-let delay;
+const submitBtn = document.querySelector('[type="submit"]');
 
-input.addEventListener('input', e => {
-    delay = e.currentTarget.value;
-})
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
 
-form.addEventListener('submit', e => {
-    e.preventDefault();
-    
-    function createPromise(delay, state) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (state === 'fulfilled') {
-                    resolve(delay);
-                } else {
-                    reject(delay);
-                }
-            }, delay);
-        })
+  const delay = Number(document.querySelector('[name="delay"]').value);
+  const state = document.querySelector('[name="state"]:checked');
 
-    }
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (state.value === 'fulfilled') {
+        resolve(delay);
+      } else {
+        reject(delay);
+      }
+    }, delay);
+  });
 
-    createPromise(delay, form.elements.state.value)
-        .then(delay => {
-            iziToast.show({
-                message: `✅ Fulfilled promise in ${delay}ms`,
-                position: 'topRight',
-                backgroundColor: '#59A10D',
-                messageColor: '#FFFFFF',
-            })
-        })
-        .catch(delay => {
-            iziToast.show({
-                message: `❌ Rejected promise in ${delay}ms`,
-                position: 'topRight',
-                backgroundColor: '#EF4040',
-                messageColor: '#FFFFFF',
-            })
-        });
-    form.reset();
+  promise
+    .then(delay => {
+      iziToast.success({
+        message: `Fulfilled promise in ${delay}ms`,
+        messageColor: '#FFF',
+        backgroundColor: '#59A10D',
+        position: 'topRight',
+        iconUrl: iconOk,
+      });
+    })
+    .catch(delay => {
+      iziToast.error({
+        message: `Rejected promise in ${delay}ms`,
+        messageColor: '#FFF',
+        backgroundColor: '#EF4040',
+        position: 'topRight',
+        iconUrl: iconClose,
+      });
+    });
 });

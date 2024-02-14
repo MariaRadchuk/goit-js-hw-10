@@ -1,61 +1,44 @@
-
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+import iconClose from '../img/bi_x-octagon.png';
 
-const startBtn = document.querySelector('.js-button');
-const input = document.querySelector('#datetime-picker');
-const day = document.querySelector('.value[ data-days ]');
-const hour = document.querySelector('.value[ data-hours ]');
-const minute = document.querySelector('.value[ data-minutes ]');
-const second = document.querySelector('.value[ data-seconds ]');
-startBtn.setAttribute('disabled', '');
-let diff;
+const btnStart = document.querySelector('.start-btn');
+const dataDay = document.querySelector('span[data-days]');
+const dataHours = document.querySelector('span[data-hours]');
+const dataMinutes = document.querySelector('span[data-minutes]');
+const dataSeconds = document.querySelector('span[data-seconds]');
+
+btnStart.disabled = true;
+
 let userSelectedDate;
+let difference;
+let timerInterval;
+
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
+
   onClose(selectedDates) {
-      userSelectedDate = selectedDates[0];
-      if (userSelectedDate < Date.now()) {
-        startBtn.setAttribute('disabled', '');
-        startBtn.style.backgroundColor = '#CFCFCF';
-          startBtn.style.color = '##989898';
-          
-    iziToast.show({
+    userSelectedDate = selectedDates[0];
+    difference = userSelectedDate.getTime() - Date.now();
+    if (userSelectedDate < Date.now()) {
+      iziToast.show({
         message: 'Please choose a date in the future',
-        messageColor: '#FFFFFF',
+        messageColor: '#FFF',
         backgroundColor: '#EF4040',
         position: 'topRight',
-    });          
-} else {
-        startBtn.removeAttribute('disabled');
-        startBtn.style.backgroundColor = '#4E75FF';
-        startBtn.style.color = '#FFFFFF';  
-};
+        iconUrl: iconClose,
+      });
+      btnStart.disabled = true;
+    } else {
+      btnStart.disabled = false;
+    }
   },
 };
-
-flatpickr(input, options);
-
-startBtn.addEventListener('click', () => {
-    startBtn.setAttribute('disabled', '');
-    input.setAttribute('disabled', '');
-    startBtn.style.backgroundColor = '#CFCFCF';
-    startBtn.style.color = '##989898';
-    diff = userSelectedDate - Date.now();
-     timerNumber(convertMs(diff));
-    const intervalId = setInterval(() => {
-        diff -= 1000;
-        timerNumber(convertMs(diff));
-        if (diff <= 1000) {
-            clearInterval(intervalId);
-        }
-    }, 1000);
-})
 
 function convertMs(ms) {
   const second = 1000;
@@ -71,13 +54,53 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-function timerNumber({ days, hours, minutes, seconds }) {
-    day.textContent = `${addLeadingZero(days)}`;
-    hour.textContent = `${addLeadingZero(hours)}`;
-    minute.textContent = `${addLeadingZero(minutes)}`;
-    second.textContent = `${addLeadingZero(seconds)}`;
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
 }
 
-function addLeadingZero(value) {
-    return value.toString().padStart(2, '0');
+function onTimer(difference) {
+  const timer = convertMs(difference);
+  dataDay.textContent = `${addLeadingZero(timer.days)}`;
+  dataHours.textContent = `${addLeadingZero(timer.hours)}`;
+  dataMinutes.textContent = `${addLeadingZero(timer.minutes)}`;
+  dataSeconds.textContent = `${addLeadingZero(timer.seconds)}`;
 }
+
+function onStart() {
+  if (userSelectedDate > Date.now()) {
+    difference = userSelectedDate.getTime() - Date.now();
+    timerInterval = setInterval(() => {
+      if (difference <= 0) {
+        clearInterval(timerInterval);
+      } else {
+        onTimer(difference);
+        difference -= 1000;
+      }
+    }, 1000);
+  } else {
+    iziToast.show({
+      message: 'Please choose a date in the future',
+      messageColor: '#FFF',
+      backgroundColor: '#EF4040',
+      position: 'topRight',
+      iconUrl: iconClose,
+    });
+  }
+}
+
+flatpickr('#datetime-picker', options);
+
+btnStart.addEventListener('click', () => {
+  if (userSelectedDate > Date.now()) {
+    onStart();
+    btnStart.disabled = true;
+  } else {
+    iziToast.show({
+      message: 'Please choose a date in the future',
+      messageColor: '#FFF',
+      backgroundColor: '#EF4040',
+      position: 'topRight',
+      iconUrl: iconClose,
+    });
+  }
+});
