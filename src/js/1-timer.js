@@ -2,7 +2,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-import iconClose from '../img/bi_x-octagon.png';
 
 const btnStart = document.querySelector('.start-btn');
 const dataDay = document.querySelector('span[data-days]');
